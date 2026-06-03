@@ -1,6 +1,6 @@
 import { LikeRepository } from "@/domain/repositories/like.repository"
 import { PostRepository } from "@/domain/repositories/post.repository"
-import { Like } from "@/domain/entities/like.entity"
+import { Like, ReactionType } from "@/domain/entities/like.entity"
 import { AddLikeDto } from "@/application/dtos/likes/add-like.dto"
 
 export class AddLikeUseCase {
@@ -15,7 +15,7 @@ export class AddLikeUseCase {
 
         const like = new Like({
             postId,
-            reactionType: dto.reactionType ?? "like",
+            reactionType: dto.reactionType as ReactionType ?? "like",
             weight: dto.weight ?? 1,
         })
 
