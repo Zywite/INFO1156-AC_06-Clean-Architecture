@@ -1,48 +1,33 @@
 import { Body, Controller, Get, Post, Query } from "@nestjs/common"
-
-import { PostsService } from "@/posts/posts.service"
-import { FeedRankingStrategyFactory } from "@/posts/feed-ranking.strategy"
-import { CreatePostDto, FeedQueryDto } from "@/posts/posts.dtos"
+import { CreatePostUseCase } from "@/application/use-cases/posts/create-post.use-case"
+import { GetFeedUseCase } from "@/application/use-cases/posts/get-feed.use-case"
+import { GetPostsUseCase } from "@/application/use-cases/posts/get-posts.use-case"
+import { CreatePostRequestDto, FeedQueryRequestDto } from "./posts.dtos"
 
 @Controller("api/posts")
 export class PostsController {
     constructor(
-        private readonly postsService: PostsService,
-        private readonly feedRankingFactory: FeedRankingStrategyFactory,
+        private readonly createPostUseCase: CreatePostUseCase,
+        private readonly getFeedUseCase: GetFeedUseCase,
+        private readonly getPostsUseCase: GetPostsUseCase,
     ) {}
 
     @Post()
-    async create(@Body() body: CreatePostDto) {
-        const created = await this.postsService.create(body)
-
-        return {
-            ok: true,
-            payload: created,
-        }
+    async create(@Body() body: CreatePostRequestDto) {
+        const post = await this.createPostUseCase.execute(body)
+        return { ok: true, payload: post }
     }
 
     @Get()
     async findAll() {
-        const posts = await this.postsService.findAll()
-
-        return {
-            total: posts.length,
-            items: posts,
-        }
+        const posts = await this.getPostsUseCase.execute()
+        return { total: posts.length, items: posts }
     }
 
     @Get("feed")
-    async getFeed(@Query() query: FeedQueryDto) {
+    async getFeed(@Query() query: FeedQueryRequestDto) {
         const mode = query.mode ?? "latest"
-        const feedPosts = await this.postsService.getFeedPosts(query.categoryId)
-        const rankedPosts = this.feedRankingFactory
-            .forMode(mode)
-            .rank(feedPosts)
-
-        return {
-            mode,
-            count: rankedPosts.length,
-            rows: rankedPosts,
-        }
+        const posts = await this.getFeedUseCase.execute(query.categoryId, mode as any)
+        return { mode, count: posts.length, rows: posts }
     }
 }
