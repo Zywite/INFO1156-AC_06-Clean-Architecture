@@ -1,3 +1,8 @@
+import { Injectable } from "@nestjs/common"
+import { CategoryRepository } from "@/domain/repositories/category.repository"
+import { Category } from "@/domain/entities/category.entity"
+import { PrismaService } from "@/infrastructure/persistence/prisma.service"
+
 @Injectable()
 export class PrismaCategoryRepository implements CategoryRepository {
     constructor(private readonly prisma: PrismaService) {}

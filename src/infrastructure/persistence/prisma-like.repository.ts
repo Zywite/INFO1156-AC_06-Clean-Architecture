@@ -1,3 +1,8 @@
+import { Injectable } from "@nestjs/common"
+import { LikeRepository } from "@/domain/repositories/like.repository"
+import { Like } from "@/domain/entities/like.entity"
+import { PrismaService } from "@/infrastructure/persistence/prisma.service"
+
 @Injectable()
 export class PrismaLikeRepository implements LikeRepository {
     constructor(private readonly prisma: PrismaService) {}

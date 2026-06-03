@@ -1,3 +1,8 @@
+import { Injectable } from "@nestjs/common"
+import { CommentRepository } from "@/domain/repositories/comment.repository"
+import { Comment } from "@/domain/entities/comment.entity"
+import { PrismaService } from "@/infrastructure/persistence/prisma.service"
+
 @Injectable()
 export class PrismaCommentRepository implements CommentRepository {
     constructor(private readonly prisma: PrismaService) {}
