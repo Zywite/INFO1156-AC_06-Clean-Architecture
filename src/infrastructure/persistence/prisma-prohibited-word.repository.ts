@@ -1,4 +1,7 @@
-import { NotFoundException } from "@nestjs/common"
+import { Injectable, NotFoundException } from "@nestjs/common"
+import { ProhibitedWordRepository } from "@/domain/repositories/prohibited-word.repository"
+import { ProhibitedWord } from "@/domain/entities/prohibited-word.entity"
+import { PrismaService } from "@/infrastructure/persistence/prisma.service"
 
 @Injectable()
 export class PrismaProhibitedWordRepository implements ProhibitedWordRepository {
