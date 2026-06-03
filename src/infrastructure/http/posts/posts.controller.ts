@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from "@nestjs/common"
+import { Body, Controller, Get, Post, Query, BadRequestException } from "@nestjs/common"
 import { CreatePostUseCase } from "@/application/use-cases/posts/create-post.use-case"
 import { GetFeedUseCase } from "@/application/use-cases/posts/get-feed.use-case"
 import { GetPostsUseCase } from "@/application/use-cases/posts/get-posts.use-case"
@@ -14,8 +14,12 @@ export class PostsController {
 
     @Post()
     async create(@Body() body: CreatePostRequestDto) {
-        const post = await this.createPostUseCase.execute(body)
-        return { ok: true, payload: post }
+        try {
+            const post = await this.createPostUseCase.execute(body)
+            return { ok: true, payload: post }
+        } catch (e: any) {
+            throw new BadRequestException(e.message)
+        }
     }
 
     @Get()

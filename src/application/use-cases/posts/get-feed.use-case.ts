@@ -1,9 +1,10 @@
+import { Inject } from "@nestjs/common"
 import { PostRepository, PostWithInteractions } from "@/domain/repositories/post.repository"
 import { FeedRankingStrategyFactory, FeedMode } from "@/domain/services/feed-ranking.strategy"
 
 export class GetFeedUseCase {
     constructor(
-        private readonly postRepo: PostRepository,
+        @Inject("PostRepository") private readonly postRepo: PostRepository,
         private readonly feedRankingFactory: FeedRankingStrategyFactory,
     ) {}
 

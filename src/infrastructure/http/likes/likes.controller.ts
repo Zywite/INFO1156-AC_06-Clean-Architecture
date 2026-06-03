@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from "@nestjs/common"
+import { Body, Controller, Param, Post, NotFoundException } from "@nestjs/common"
 import { AddLikeUseCase } from "@/application/use-cases/likes/add-like.use-case"
 import { AddLikeRequestDto } from "./likes.dtos"
 
@@ -8,6 +8,10 @@ export class LikesController {
 
     @Post()
     async create(@Param("id") postId: string, @Body() body: AddLikeRequestDto) {
-        return this.addLikeUseCase.execute(postId, body)
+        try {
+            return await this.addLikeUseCase.execute(postId, body)
+        } catch (e: any) {
+            throw new NotFoundException(e.message)
+        }
     }
 }

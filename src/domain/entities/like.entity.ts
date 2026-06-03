@@ -5,6 +5,7 @@ export type LikeProps = {
     postId: string
     reactionType?: ReactionType
     weight?: number
+    source?: string
     createdAt?: Date
 }
 
@@ -13,6 +14,7 @@ export class Like {
     postId: string
     reactionType: ReactionType
     weight: number
+    source: string
     createdAt: Date
 
     constructor(props: LikeProps) {
@@ -20,6 +22,7 @@ export class Like {
         this.postId = props.postId
         this.reactionType = props.reactionType ?? "like"
         this.weight = props.weight ?? 1
+        this.source = props.source ?? "likes-module"
         this.createdAt = props.createdAt ?? new Date()
     }
 

@@ -1,3 +1,4 @@
+import { Inject } from "@nestjs/common"
 import { CommentRepository } from "@/domain/repositories/comment.repository"
 import { PostRepository } from "@/domain/repositories/post.repository"
 import { ProhibitedWordRepository } from "@/domain/repositories/prohibited-word.repository"
@@ -7,9 +8,9 @@ import { CreateCommentDto } from "@/application/dtos/comments/create-comment.dto
 
 export class CreateCommentUseCase {
     constructor(
-        private readonly commentRepo: CommentRepository,
-        private readonly postRepo: PostRepository,
-        private readonly prohibitedWordRepo: ProhibitedWordRepository,
+        @Inject("CommentRepository") private readonly commentRepo: CommentRepository,
+        @Inject("PostRepository") private readonly postRepo: PostRepository,
+        @Inject("ProhibitedWordRepository") private readonly prohibitedWordRepo: ProhibitedWordRepository,
         private readonly moderationService: ModerationDomainService,
     ) {}
 

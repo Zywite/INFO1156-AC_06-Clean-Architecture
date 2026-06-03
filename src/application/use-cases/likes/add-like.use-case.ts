@@ -1,3 +1,4 @@
+import { Inject } from "@nestjs/common"
 import { LikeRepository } from "@/domain/repositories/like.repository"
 import { PostRepository } from "@/domain/repositories/post.repository"
 import { Like, ReactionType } from "@/domain/entities/like.entity"
@@ -5,8 +6,8 @@ import { AddLikeDto } from "@/application/dtos/likes/add-like.dto"
 
 export class AddLikeUseCase {
     constructor(
-        private readonly likeRepo: LikeRepository,
-        private readonly postRepo: PostRepository,
+        @Inject("LikeRepository") private readonly likeRepo: LikeRepository,
+        @Inject("PostRepository") private readonly postRepo: PostRepository,
     ) {}
 
     async execute(postId: string, dto: AddLikeDto): Promise<Like> {
