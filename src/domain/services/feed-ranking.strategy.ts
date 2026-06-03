@@ -8,11 +8,11 @@ export type FeedPost = {
 export type FeedMode = "latest" | "mostLiked" | "mostCommented" | "relevance"
 
 export interface FeedRankingStrategy {
-    rank(posts: FeedPost[]): FeedPost[]
+    rank<T extends FeedPost>(posts: T[]): T[]
 }
 
 class LatestRankingStrategy implements FeedRankingStrategy {
-    rank(posts: FeedPost[]): FeedPost[] {
+    rank<T extends FeedPost>(posts: T[]): T[] {
         return [...posts].sort(
             (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
         )
@@ -20,19 +20,19 @@ class LatestRankingStrategy implements FeedRankingStrategy {
 }
 
 class MostLikedRankingStrategy implements FeedRankingStrategy {
-    rank(posts: FeedPost[]): FeedPost[] {
+    rank<T extends FeedPost>(posts: T[]): T[] {
         return [...posts].sort((a, b) => b.likesCount - a.likesCount)
     }
 }
 
 class MostCommentedRankingStrategy implements FeedRankingStrategy {
-    rank(posts: FeedPost[]): FeedPost[] {
+    rank<T extends FeedPost>(posts: T[]): T[] {
         return [...posts].sort((a, b) => b.commentsCount - a.commentsCount)
     }
 }
 
 class RelevanceRankingStrategy implements FeedRankingStrategy {
-    rank(posts: FeedPost[]): FeedPost[] {
+    rank<T extends FeedPost>(posts: T[]): T[] {
         return [...posts].sort((a, b) => b.relevanceScore - a.relevanceScore)
     }
 }
