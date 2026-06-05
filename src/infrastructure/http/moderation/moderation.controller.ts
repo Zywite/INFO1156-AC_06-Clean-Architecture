@@ -14,19 +14,22 @@ export class ModerationController {
 
     @Get()
     async findAll() {
-        return this.getProhibitedWordsUseCase.execute()
+        const words = await this.getProhibitedWordsUseCase.execute()
+        return { data: words, total: words.length }
     }
 
     @Post()
     async create(@Body() body: CreateProhibitedWordRequestDto) {
-        return this.createProhibitedWordUseCase.execute(
+        const word = await this.createProhibitedWordUseCase.execute(
             body.word,
             body.category,
         )
+        return { data: word }
     }
 
     @Delete(":id")
     async delete(@Param("id") id: string) {
-        return this.deleteProhibitedWordUseCase.execute(id)
+        await this.deleteProhibitedWordUseCase.execute(id)
+        return { data: null }
     }
 }

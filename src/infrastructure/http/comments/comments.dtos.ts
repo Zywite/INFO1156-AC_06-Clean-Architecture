@@ -1,7 +1,9 @@
 import { IsNotEmpty, IsString, Length, Matches } from "class-validator"
 
-const NO_HTML_PATTERN = /^[^<>]*$/
-const NO_HTML_MESSAGE = "No se permiten etiquetas HTML"
+import {
+    NO_HTML_PATTERN,
+    NO_HTML_MESSAGE,
+} from "@/infrastructure/http/common/validation.constants"
 
 export class CreateCommentRequestDto {
     @IsString({ message: "El contenido debe ser un texto" })

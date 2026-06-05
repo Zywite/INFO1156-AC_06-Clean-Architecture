@@ -17,8 +17,4 @@ export class Comment {
         this.content = props.content
         this.createdAt = props.createdAt ?? new Date()
     }
-
-    isValid(): boolean {
-        return this.content.length >= 2 && this.content.length <= 400
-    }
 }

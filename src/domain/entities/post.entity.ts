@@ -26,12 +26,4 @@ export class Post {
         this.createdAt = props.createdAt ?? new Date()
         this.updatedAt = props.updatedAt ?? new Date()
     }
-
-    hasValidTitle(): boolean {
-        return this.title.length >= 3 && this.title.length <= 120
-    }
-
-    belongsToCategory(): boolean {
-        return this.categoryId !== null
-    }
 }

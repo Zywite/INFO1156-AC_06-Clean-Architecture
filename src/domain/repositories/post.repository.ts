@@ -17,8 +17,7 @@ export type PostWithInteractions = {
 export interface PostRepository {
     findAll(): Promise<Post[]>
     findById(id: string): Promise<Post | null>
-    findByCategory(categoryId: string): Promise<Post[]>
+    findByIdOrThrow(id: string): Promise<Post>
     findWithInteractions(categoryId?: string): Promise<PostWithInteractions[]>
     save(post: Post): Promise<Post>
-    delete(id: string): Promise<void>
 }

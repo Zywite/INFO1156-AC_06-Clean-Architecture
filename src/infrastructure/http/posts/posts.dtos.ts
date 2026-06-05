@@ -9,8 +9,10 @@ import {
     MaxLength,
 } from "class-validator"
 
-const NO_HTML_PATTERN = /^[^<>]*$/
-const NO_HTML_MESSAGE = "No se permiten etiquetas HTML"
+import {
+    NO_HTML_PATTERN,
+    NO_HTML_MESSAGE,
+} from "@/infrastructure/http/common/validation.constants"
 
 export class CreatePostRequestDto {
     @IsString({ message: "El título debe ser un texto" })
@@ -46,13 +48,15 @@ export class CreatePostRequestDto {
     categoryId?: string
 }
 
+import { FeedMode } from "@/domain/services/feed-ranking.strategy"
+
 export class FeedQueryRequestDto {
     @IsOptional()
     @IsString({ message: "El modo debe ser un texto" })
     @IsIn(["latest", "mostLiked", "mostCommented", "relevance"], {
         message: "Modo de feed no válido",
     })
-    mode?: string
+    mode?: FeedMode
 
     @IsOptional()
     @IsString({ message: "La categoría debe ser un texto" })

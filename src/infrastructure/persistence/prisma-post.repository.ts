@@ -4,6 +4,7 @@ import {
     PostWithInteractions,
 } from "@/domain/repositories/post.repository"
 import { Post } from "@/domain/entities/post.entity"
+import { PostNotFoundException } from "@/domain/exceptions/post-not-found.exception"
 import { PrismaService } from "@/infrastructure/persistence/prisma.service"
 
 @Injectable()
@@ -33,9 +34,10 @@ export class PrismaPostRepository implements PostRepository {
         return row ? new Post({ ...row }) : null
     }
 
-    async findByCategory(categoryId: string): Promise<Post[]> {
-        const rows = await this.prisma.post.findMany({ where: { categoryId } })
-        return rows.map((row) => new Post({ ...row }))
+    async findByIdOrThrow(id: string): Promise<Post> {
+        const post = await this.findById(id)
+        if (!post) throw new PostNotFoundException()
+        return post
     }
 
     async findWithInteractions(
@@ -45,19 +47,31 @@ export class PrismaPostRepository implements PostRepository {
             where: categoryId ? { categoryId } : undefined,
             include: { comments: true, likes: true, category: true },
         })
-        return rows.map((row) => ({
-            id: row.id,
-            title: row.title,
-            description: row.description,
-            imageUrl: row.imageUrl,
-            categoryId: row.categoryId,
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
-            categoryName: row.category?.name ?? null,
-            likesCount: row.likes.reduce((sum, l) => sum + l.weight, 0),
-            commentsCount: row.comments.length,
-            relevanceScore: 0,
-        }))
+        return rows.map((row) => {
+            const likesCount = row.likes.reduce((sum, l) => sum + l.weight, 0)
+            const commentsCount = row.comments.length
+            const hoursSinceCreation =
+                (Date.now() - row.createdAt.getTime()) / 3600000
+            let recencyBonus = 0
+            if (hoursSinceCreation < 1) recencyBonus = 20
+            else if (hoursSinceCreation < 24) recencyBonus = 10
+            const relevanceScore =
+                likesCount * 10 + commentsCount * 5 + recencyBonus
+
+            return {
+                id: row.id,
+                title: row.title,
+                description: row.description,
+                imageUrl: row.imageUrl,
+                categoryId: row.categoryId,
+                createdAt: row.createdAt,
+                updatedAt: row.updatedAt,
+                categoryName: row.category?.name ?? null,
+                likesCount,
+                commentsCount,
+                relevanceScore,
+            }
+        })
     }
 
     async save(post: Post): Promise<Post> {
@@ -70,9 +84,5 @@ export class PrismaPostRepository implements PostRepository {
             },
         })
         return new Post({ ...row })
-    }
-
-    async delete(id: string): Promise<void> {
-        await this.prisma.post.delete({ where: { id } })
     }
 }

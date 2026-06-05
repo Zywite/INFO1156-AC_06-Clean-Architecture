@@ -60,8 +60,7 @@ describe("API Integration", () => {
                 })
                 .expect(201)
 
-            expect(res.body.ok).toBe(true)
-            expect(res.body.payload).toMatchObject({
+            expect(res.body.data).toMatchObject({
                 id: expect.any(String),
                 title: "Titulo valido para test",
                 description: "Descripcion suficientemente larga para crear un post.",
@@ -80,8 +79,7 @@ describe("API Integration", () => {
                 })
                 .expect(201)
 
-            expect(res.body.ok).toBe(true)
-            expect(res.body.payload.categoryId).toBeNull()
+            expect(res.body.data.categoryId).toBeNull()
         })
 
         it("rejects post with too-short title", async () => {
@@ -207,7 +205,7 @@ describe("API Integration", () => {
                 .expect(200)
 
             expect(res.body.total).toBe(2)
-            expect(res.body.items).toHaveLength(2)
+            expect(res.body.data).toHaveLength(2)
         })
 
         it("returns empty list when no posts exist", async () => {
@@ -216,7 +214,7 @@ describe("API Integration", () => {
                 .expect(200)
 
             expect(res.body.total).toBe(0)
-            expect(res.body.items).toEqual([])
+            expect(res.body.data).toEqual([])
         })
     })
 
@@ -239,7 +237,7 @@ describe("API Integration", () => {
                 .expect(200)
 
             expect(res.body.mode).toBe("latest")
-            expect(res.body.rows).toHaveLength(1)
+            expect(res.body.data).toHaveLength(1)
         })
 
         it("orders feed by mostLiked", async () => {
@@ -262,17 +260,17 @@ describe("API Integration", () => {
                 .expect(201)
 
             await request(app.getHttpServer())
-                .post(`/api/posts/${a.body.payload.id}/likes`)
+                .post(`/api/posts/${a.body.data.id}/likes`)
                 .send({ reactionType: "like", weight: 2 })
                 .expect(201)
 
             await request(app.getHttpServer())
-                .post(`/api/posts/${a.body.payload.id}/likes`)
+                .post(`/api/posts/${a.body.data.id}/likes`)
                 .send({ reactionType: "clap", weight: 1 })
                 .expect(201)
 
             await request(app.getHttpServer())
-                .post(`/api/posts/${b.body.payload.id}/likes`)
+                .post(`/api/posts/${b.body.data.id}/likes`)
                 .send({ reactionType: "like", weight: 1 })
                 .expect(201)
 
@@ -280,9 +278,9 @@ describe("API Integration", () => {
                 .get("/api/posts/feed?mode=mostLiked")
                 .expect(200)
 
-            expect(res.body.rows[0].id).toBe(a.body.payload.id)
-            expect(res.body.rows[0].likesCount).toBe(3)
-            expect(res.body.rows[1].id).toBe(b.body.payload.id)
+            expect(res.body.data[0].id).toBe(a.body.data.id)
+            expect(res.body.data[0].likesCount).toBe(3)
+            expect(res.body.data[1].id).toBe(b.body.data.id)
         })
 
         it("filters feed by categoryId", async () => {
@@ -313,8 +311,8 @@ describe("API Integration", () => {
                 .get(`/api/posts/feed?mode=latest&categoryId=${cat.id}`)
                 .expect(200)
 
-            expect(res.body.rows).toHaveLength(1)
-            expect(res.body.rows[0].title).toBe("Post con categoria")
+            expect(res.body.data).toHaveLength(1)
+            expect(res.body.data[0].title).toBe("Post con categoria")
         })
 
         it("rejects invalid mode", async () => {
@@ -343,13 +341,13 @@ describe("API Integration", () => {
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/comments`)
+                .post(`/api/posts/${post.body.data.id}/comments`)
                 .send({ content: "Comentario valido y normal" })
                 .expect(201)
 
-            expect(res.body).toMatchObject({
+            expect(res.body.data).toMatchObject({
                 id: expect.any(String),
-                postId: post.body.payload.id,
+                postId: post.body.data.id,
                 content: "Comentario valido y normal",
             })
         })
@@ -365,7 +363,7 @@ describe("API Integration", () => {
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/comments`)
+                .post(`/api/posts/${post.body.data.id}/comments`)
                 .send({ content: "X" })
                 .expect(400)
 
@@ -396,7 +394,7 @@ describe("API Integration", () => {
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/comments`)
+                .post(`/api/posts/${post.body.data.id}/comments`)
                 .send({ content: "Esto es malo y ofensivo" })
                 .expect(400)
 
@@ -419,21 +417,21 @@ describe("API Integration", () => {
                 .expect(201)
 
             await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/comments`)
+                .post(`/api/posts/${post.body.data.id}/comments`)
                 .send({ content: "Primer comentario" })
                 .expect(201)
 
             await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/comments`)
+                .post(`/api/posts/${post.body.data.id}/comments`)
                 .send({ content: "Segundo comentario" })
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .get(`/api/posts/${post.body.payload.id}/comments`)
+                .get(`/api/posts/${post.body.data.id}/comments`)
                 .expect(200)
 
-            expect(res.body.total_comments).toBe(2)
-            expect(res.body.comments).toHaveLength(2)
+            expect(res.body.total).toBe(2)
+            expect(res.body.data).toHaveLength(2)
         })
 
         it("returns 404 for non-existent post", async () => {
@@ -458,13 +456,13 @@ describe("API Integration", () => {
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/likes`)
+                .post(`/api/posts/${post.body.data.id}/likes`)
                 .send({})
                 .expect(201)
 
-            expect(res.body).toMatchObject({
+            expect(res.body.data).toMatchObject({
                 id: expect.any(String),
-                postId: post.body.payload.id,
+                postId: post.body.data.id,
                 reactionType: "like",
                 weight: 1,
                 source: "likes-module",
@@ -482,12 +480,12 @@ describe("API Integration", () => {
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/likes`)
+                .post(`/api/posts/${post.body.data.id}/likes`)
                 .send({ reactionType: "fire", weight: 3 })
                 .expect(201)
 
-            expect(res.body.reactionType).toBe("fire")
-            expect(res.body.weight).toBe(3)
+            expect(res.body.data.reactionType).toBe("fire")
+            expect(res.body.data.weight).toBe(3)
         })
 
         it("rejects like for non-existent post", async () => {
@@ -508,7 +506,7 @@ describe("API Integration", () => {
                 .expect(201)
 
             const res = await request(app.getHttpServer())
-                .post(`/api/posts/${post.body.payload.id}/likes`)
+                .post(`/api/posts/${post.body.data.id}/likes`)
                 .send({ reactionType: "invalid" })
                 .expect(400)
 
@@ -527,10 +525,10 @@ describe("API Integration", () => {
                 .get("/api/categories")
                 .expect(200)
 
-            expect(Array.isArray(res.body)).toBe(true)
-            expect(res.body.length).toBeGreaterThanOrEqual(1)
+            expect(Array.isArray(res.body.data)).toBe(true)
+            expect(res.body.data.length).toBeGreaterThanOrEqual(1)
 
-            const tech = res.body.find(
+            const tech = res.body.data.find(
                 (c: { slug: string }) => c.slug === "technology",
             )
             expect(tech).toBeDefined()
@@ -548,7 +546,7 @@ describe("API Integration", () => {
                 .send({ word: "spam", category: "SPAM" })
                 .expect(201)
 
-            expect(res.body).toMatchObject({
+            expect(res.body.data).toMatchObject({
                 id: expect.any(String),
                 word: "spam",
                 category: "SPAM",
@@ -597,8 +595,8 @@ describe("API Integration", () => {
                 .get("/api/admin/prohibited-words")
                 .expect(200)
 
-            expect(Array.isArray(res.body)).toBe(true)
-            expect(res.body).toHaveLength(2)
+            expect(Array.isArray(res.body.data)).toBe(true)
+            expect(res.body.data).toHaveLength(2)
         })
 
         it("returns empty array when no words exist", async () => {
@@ -606,7 +604,7 @@ describe("API Integration", () => {
                 .get("/api/admin/prohibited-words")
                 .expect(200)
 
-            expect(res.body).toEqual([])
+            expect(res.body.data).toEqual([])
         })
     })
 
@@ -621,14 +619,14 @@ describe("API Integration", () => {
                 .expect(201)
 
             await request(app.getHttpServer())
-                .delete(`/api/admin/prohibited-words/${created.body.id}`)
+                .delete(`/api/admin/prohibited-words/${created.body.data.id}`)
                 .expect(200)
 
             const list = await request(app.getHttpServer())
                 .get("/api/admin/prohibited-words")
                 .expect(200)
 
-            expect(list.body).toEqual([])
+            expect(list.body.data).toEqual([])
         })
 
         it("returns 404 for non-existent word", async () => {

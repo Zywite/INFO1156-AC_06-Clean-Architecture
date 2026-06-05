@@ -1,29 +1,19 @@
 import { Inject } from "@nestjs/common"
 import { PostRepository } from "@/domain/repositories/post.repository"
-import { ProhibitedWordRepository } from "@/domain/repositories/prohibited-word.repository"
-import { ModerationDomainService } from "@/domain/services/moderation.service"
 import { Post } from "@/domain/entities/post.entity"
 import { CreatePostDto } from "@/application/dtos/posts/create-post.dto"
+import { POST_REPOSITORY } from "@/domain/di.tokens"
+import { ModerationGuard } from "@/application/services/moderation-guard.service"
 
 export class CreatePostUseCase {
     constructor(
-        @Inject("PostRepository") private readonly postRepo: PostRepository,
-        @Inject("ProhibitedWordRepository")
-        private readonly prohibitedWordRepo: ProhibitedWordRepository,
-        private readonly moderationService: ModerationDomainService,
+        @Inject(POST_REPOSITORY) private readonly postRepo: PostRepository,
+        private readonly moderationGuard: ModerationGuard,
     ) {}
 
     async execute(dto: CreatePostDto): Promise<Post> {
-        const prohibitedWords = await this.prohibitedWordRepo.findAll()
         const textToModerate = `${dto.title} ${dto.description}`
-        const result = this.moderationService.moderate(
-            textToModerate,
-            prohibitedWords,
-        )
-
-        if (!result.approved) {
-            throw new Error(result.reason ?? "Post bloqueado por moderación")
-        }
+        await this.moderationGuard.check(textToModerate)
 
         const post = new Post({
             title: dto.title,

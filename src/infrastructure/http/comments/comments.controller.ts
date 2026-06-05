@@ -10,6 +10,8 @@ import {
 import { CreateCommentUseCase } from "@/application/use-cases/comments/create-comment.use-case"
 import { GetCommentsUseCase } from "@/application/use-cases/comments/get-comments.use-case"
 import { CreateCommentRequestDto } from "./comments.dtos"
+import { PostNotFoundException } from "@/domain/exceptions/post-not-found.exception"
+import { ModerationBlockedException } from "@/domain/exceptions/moderation-blocked.exception"
 
 @Controller("api/posts/:id/comments")
 export class CommentsController {
@@ -24,11 +26,19 @@ export class CommentsController {
         @Body() body: CreateCommentRequestDto,
     ) {
         try {
-            return await this.createCommentUseCase.execute(postId, body)
-        } catch (e: any) {
-            if (e.message === "Post no encontrado")
+            const comment = await this.createCommentUseCase.execute(
+                postId,
+                body,
+            )
+            return { data: comment }
+        } catch (e: unknown) {
+            if (e instanceof PostNotFoundException) {
                 throw new NotFoundException(e.message)
-            throw new BadRequestException(e.message)
+            }
+            if (e instanceof ModerationBlockedException) {
+                throw new BadRequestException(e.message)
+            }
+            throw e
         }
     }
 
@@ -36,9 +46,12 @@ export class CommentsController {
     async list(@Param("id") postId: string) {
         try {
             const comments = await this.getCommentsUseCase.execute(postId)
-            return { total_comments: comments.length, comments }
-        } catch (e: any) {
-            throw new NotFoundException(e.message)
+            return { data: comments, total: comments.length }
+        } catch (e: unknown) {
+            if (e instanceof PostNotFoundException) {
+                throw new NotFoundException(e.message)
+            }
+            throw e
         }
     }
 }

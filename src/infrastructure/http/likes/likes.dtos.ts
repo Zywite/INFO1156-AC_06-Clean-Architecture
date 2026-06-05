@@ -1,4 +1,5 @@
 import { IsIn, IsInt, IsOptional, IsString, Min } from "class-validator"
+import { ReactionType } from "@/domain/entities/like.entity"
 
 export class AddLikeRequestDto {
     @IsOptional()
@@ -6,7 +7,7 @@ export class AddLikeRequestDto {
     @IsIn(["like", "fire", "clap"], {
         message: "Tipo de reacción no válida (like, fire, clap)",
     })
-    reactionType?: string
+    reactionType?: ReactionType
 
     @IsOptional()
     @IsInt({ message: "El peso debe ser un número entero" })

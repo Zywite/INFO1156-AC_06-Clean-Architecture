@@ -10,6 +10,7 @@ import { CreatePostUseCase } from "@/application/use-cases/posts/create-post.use
 import { GetFeedUseCase } from "@/application/use-cases/posts/get-feed.use-case"
 import { GetPostsUseCase } from "@/application/use-cases/posts/get-posts.use-case"
 import { CreatePostRequestDto, FeedQueryRequestDto } from "./posts.dtos"
+import { ModerationBlockedException } from "@/domain/exceptions/moderation-blocked.exception"
 
 @Controller("api/posts")
 export class PostsController {
@@ -23,25 +24,25 @@ export class PostsController {
     async create(@Body() body: CreatePostRequestDto) {
         try {
             const post = await this.createPostUseCase.execute(body)
-            return { ok: true, payload: post }
-        } catch (e: any) {
-            throw new BadRequestException(e.message)
+            return { data: post }
+        } catch (e: unknown) {
+            if (e instanceof ModerationBlockedException) {
+                throw new BadRequestException(e.message)
+            }
+            throw e
         }
     }
 
     @Get()
     async findAll() {
         const posts = await this.getPostsUseCase.execute()
-        return { total: posts.length, items: posts }
+        return { data: posts, total: posts.length }
     }
 
     @Get("feed")
     async getFeed(@Query() query: FeedQueryRequestDto) {
         const mode = query.mode ?? "latest"
-        const posts = await this.getFeedUseCase.execute(
-            query.categoryId,
-            mode as any,
-        )
-        return { mode, count: posts.length, rows: posts }
+        const posts = await this.getFeedUseCase.execute(query.categoryId, mode)
+        return { data: posts, total: posts.length, mode }
     }
 }

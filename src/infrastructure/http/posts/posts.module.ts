@@ -3,8 +3,14 @@ import { PostsController } from "./posts.controller"
 import { CreatePostUseCase } from "@/application/use-cases/posts/create-post.use-case"
 import { GetFeedUseCase } from "@/application/use-cases/posts/get-feed.use-case"
 import { GetPostsUseCase } from "@/application/use-cases/posts/get-posts.use-case"
-import { ModerationDomainService } from "@/domain/services/moderation.service"
-import { FeedRankingStrategyFactory } from "@/domain/services/feed-ranking.strategy"
+import { ModerationGuard } from "@/application/services/moderation-guard.service"
+import {
+    FeedRankingStrategyFactory,
+    LatestRankingStrategy,
+    MostLikedRankingStrategy,
+    MostCommentedRankingStrategy,
+    RelevanceRankingStrategy,
+} from "@/domain/services/feed-ranking.strategy"
 
 @Module({
     controllers: [PostsController],
@@ -12,8 +18,12 @@ import { FeedRankingStrategyFactory } from "@/domain/services/feed-ranking.strat
         CreatePostUseCase,
         GetFeedUseCase,
         GetPostsUseCase,
-        ModerationDomainService,
+        ModerationGuard,
         FeedRankingStrategyFactory,
+        LatestRankingStrategy,
+        MostLikedRankingStrategy,
+        MostCommentedRankingStrategy,
+        RelevanceRankingStrategy,
     ],
 })
 export class PostsModule {}

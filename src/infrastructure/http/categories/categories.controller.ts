@@ -1,15 +1,13 @@
-import { Controller, Get, Inject } from "@nestjs/common"
-import { CategoryRepository } from "@/domain/repositories/category.repository"
+import { Controller, Get } from "@nestjs/common"
+import { GetCategoriesUseCase } from "@/application/use-cases/categories/get-categories.use-case"
 
 @Controller("api/categories")
 export class CategoriesController {
-    constructor(
-        @Inject("CategoryRepository")
-        private readonly categoryRepo: CategoryRepository,
-    ) {}
+    constructor(private readonly getCategoriesUseCase: GetCategoriesUseCase) {}
 
     @Get()
     async findAll() {
-        return this.categoryRepo.findAll()
+        const categories = await this.getCategoriesUseCase.execute()
+        return { data: categories, total: categories.length }
     }
 }

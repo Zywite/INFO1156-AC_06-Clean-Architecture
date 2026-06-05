@@ -5,9 +5,14 @@ import { ValidationPipe } from "@nestjs/common"
 import { NestFactory } from "@nestjs/core"
 import { NestExpressApplication } from "@nestjs/platform-express"
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
+import { ConfigService } from "@nestjs/config"
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule)
+
+    const configService = app.get(ConfigService)
+    const port = configService.get<number>("PORT", 3000)
+    const host = configService.get<string>("HOST", "0.0.0.0")
 
     app.enableCors({
         origin: "*",
@@ -34,10 +39,10 @@ async function bootstrap() {
 
     SwaggerModule.setup("docs", app, document)
 
-    await app.listen(3000, "0.0.0.0")
+    await app.listen(port, host)
 
-    console.log("Application running on: http://localhost:3000")
-    console.log("Documentation at: http://localhost:3000/docs")
+    console.log(`Application running on: http://${host}:${port}`)
+    console.log(`Documentation at: http://${host}:${port}/docs`)
 }
 
 bootstrap()

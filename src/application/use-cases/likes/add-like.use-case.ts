@@ -1,27 +1,32 @@
 import { Inject } from "@nestjs/common"
 import { LikeRepository } from "@/domain/repositories/like.repository"
 import { PostRepository } from "@/domain/repositories/post.repository"
-import { Like, ReactionType } from "@/domain/entities/like.entity"
+import { Like, isReactionType } from "@/domain/entities/like.entity"
 import { AddLikeDto } from "@/application/dtos/likes/add-like.dto"
+import { InvalidWeightException } from "@/domain/exceptions/invalid-weight.exception"
+import { LIKE_REPOSITORY, POST_REPOSITORY } from "@/domain/di.tokens"
 
 export class AddLikeUseCase {
     constructor(
-        @Inject("LikeRepository") private readonly likeRepo: LikeRepository,
-        @Inject("PostRepository") private readonly postRepo: PostRepository,
+        @Inject(LIKE_REPOSITORY) private readonly likeRepo: LikeRepository,
+        @Inject(POST_REPOSITORY) private readonly postRepo: PostRepository,
     ) {}
 
     async execute(postId: string, dto: AddLikeDto): Promise<Like> {
-        const post = await this.postRepo.findById(postId)
-        if (!post) throw new Error("Post no encontrado")
+        await this.postRepo.findByIdOrThrow(postId)
 
+        const reactionType =
+            dto.reactionType !== undefined && isReactionType(dto.reactionType)
+                ? dto.reactionType
+                : "like"
         const like = new Like({
             postId,
-            reactionType: (dto.reactionType as ReactionType) ?? "like",
+            reactionType,
             weight: dto.weight ?? 1,
         })
 
         if (!like.isValidWeight()) {
-            throw new Error("El peso debe ser al menos 1")
+            throw new InvalidWeightException()
         }
 
         return this.likeRepo.save(like)

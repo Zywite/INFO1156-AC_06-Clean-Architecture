@@ -1,5 +1,11 @@
 export type ReactionType = "like" | "fire" | "clap"
 
+const REACTION_VALUES: readonly ReactionType[] = ["like", "fire", "clap"]
+
+export function isReactionType(value: string): value is ReactionType {
+    return (REACTION_VALUES as readonly string[]).includes(value)
+}
+
 export type LikeProps = {
     id?: string
     postId: string

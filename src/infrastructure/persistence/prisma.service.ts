@@ -2,13 +2,13 @@ import { PrismaLibSql } from "@prisma/adapter-libsql"
 import { PrismaClient } from "@prisma/client"
 
 import { Injectable, OnModuleInit } from "@nestjs/common"
-
-const DATABASE_URL = "file:./sqlite.db"
+import { ConfigService } from "@nestjs/config"
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-    constructor() {
-        const adapter = new PrismaLibSql({ url: DATABASE_URL })
+    constructor(config: ConfigService) {
+        const databaseUrl = config.get<string>("DB_URL") ?? "file:./sqlite.db"
+        const adapter = new PrismaLibSql({ url: databaseUrl })
 
         super({ adapter })
     }
