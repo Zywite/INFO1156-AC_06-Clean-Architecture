@@ -19,7 +19,10 @@ export class ModerationController {
 
     @Post()
     async create(@Body() body: CreateProhibitedWordRequestDto) {
-        return this.createProhibitedWordUseCase.execute(body.word, body.category)
+        return this.createProhibitedWordUseCase.execute(
+            body.word,
+            body.category,
+        )
     }
 
     @Delete(":id")

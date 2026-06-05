@@ -16,7 +16,7 @@ export class AddLikeUseCase {
 
         const like = new Like({
             postId,
-            reactionType: dto.reactionType as ReactionType ?? "like",
+            reactionType: (dto.reactionType as ReactionType) ?? "like",
             weight: dto.weight ?? 1,
         })
 

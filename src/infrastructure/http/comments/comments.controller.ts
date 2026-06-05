@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, BadRequestException, NotFoundException } from "@nestjs/common"
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    BadRequestException,
+    NotFoundException,
+} from "@nestjs/common"
 import { CreateCommentUseCase } from "@/application/use-cases/comments/create-comment.use-case"
 import { GetCommentsUseCase } from "@/application/use-cases/comments/get-comments.use-case"
 import { CreateCommentRequestDto } from "./comments.dtos"
@@ -11,11 +19,15 @@ export class CommentsController {
     ) {}
 
     @Post()
-    async create(@Param("id") postId: string, @Body() body: CreateCommentRequestDto) {
+    async create(
+        @Param("id") postId: string,
+        @Body() body: CreateCommentRequestDto,
+    ) {
         try {
             return await this.createCommentUseCase.execute(postId, body)
         } catch (e: any) {
-            if (e.message === "Post no encontrado") throw new NotFoundException(e.message)
+            if (e.message === "Post no encontrado")
+                throw new NotFoundException(e.message)
             throw new BadRequestException(e.message)
         }
     }

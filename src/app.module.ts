@@ -7,6 +7,13 @@ import { CategoriesModule } from "@/infrastructure/http/categories/categories.mo
 import { ModerationModule } from "@/infrastructure/http/moderation/moderation.module"
 
 @Module({
-    imports: [PrismaModule, PostsModule, CommentsModule, LikesModule, CategoriesModule, ModerationModule],
+    imports: [
+        PrismaModule,
+        PostsModule,
+        CommentsModule,
+        LikesModule,
+        CategoriesModule,
+        ModerationModule,
+    ],
 })
 export class AppModule {}

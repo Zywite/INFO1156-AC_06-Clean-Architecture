@@ -6,6 +6,10 @@ import { DeleteProhibitedWordUseCase } from "@/application/use-cases/moderation/
 
 @Module({
     controllers: [ModerationController],
-    providers: [GetProhibitedWordsUseCase, CreateProhibitedWordUseCase, DeleteProhibitedWordUseCase],
+    providers: [
+        GetProhibitedWordsUseCase,
+        CreateProhibitedWordUseCase,
+        DeleteProhibitedWordUseCase,
+    ],
 })
 export class ModerationModule {}

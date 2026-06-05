@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post, Query, BadRequestException } from "@nestjs/common"
+import {
+    Body,
+    Controller,
+    Get,
+    Post,
+    Query,
+    BadRequestException,
+} from "@nestjs/common"
 import { CreatePostUseCase } from "@/application/use-cases/posts/create-post.use-case"
 import { GetFeedUseCase } from "@/application/use-cases/posts/get-feed.use-case"
 import { GetPostsUseCase } from "@/application/use-cases/posts/get-posts.use-case"
@@ -31,7 +38,10 @@ export class PostsController {
     @Get("feed")
     async getFeed(@Query() query: FeedQueryRequestDto) {
         const mode = query.mode ?? "latest"
-        const posts = await this.getFeedUseCase.execute(query.categoryId, mode as any)
+        const posts = await this.getFeedUseCase.execute(
+            query.categoryId,
+            mode as any,
+        )
         return { mode, count: posts.length, rows: posts }
     }
 }

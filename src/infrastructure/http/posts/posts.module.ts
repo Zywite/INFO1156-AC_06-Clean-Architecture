@@ -8,6 +8,12 @@ import { FeedRankingStrategyFactory } from "@/domain/services/feed-ranking.strat
 
 @Module({
     controllers: [PostsController],
-    providers: [CreatePostUseCase, GetFeedUseCase, GetPostsUseCase, ModerationDomainService, FeedRankingStrategyFactory],
+    providers: [
+        CreatePostUseCase,
+        GetFeedUseCase,
+        GetPostsUseCase,
+        ModerationDomainService,
+        FeedRankingStrategyFactory,
+    ],
 })
 export class PostsModule {}

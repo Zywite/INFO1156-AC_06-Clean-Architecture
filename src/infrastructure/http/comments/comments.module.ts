@@ -6,6 +6,10 @@ import { ModerationDomainService } from "@/domain/services/moderation.service"
 
 @Module({
     controllers: [CommentsController],
-    providers: [CreateCommentUseCase, GetCommentsUseCase, ModerationDomainService],
+    providers: [
+        CreateCommentUseCase,
+        GetCommentsUseCase,
+        ModerationDomainService,
+    ],
 })
 export class CommentsModule {}

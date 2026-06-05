@@ -14,7 +14,10 @@ import { PrismaProhibitedWordRepository } from "./prisma-prohibited-word.reposit
         { provide: "CommentRepository", useClass: PrismaCommentRepository },
         { provide: "LikeRepository", useClass: PrismaLikeRepository },
         { provide: "CategoryRepository", useClass: PrismaCategoryRepository },
-        { provide: "ProhibitedWordRepository", useClass: PrismaProhibitedWordRepository },
+        {
+            provide: "ProhibitedWordRepository",
+            useClass: PrismaProhibitedWordRepository,
+        },
     ],
     exports: [
         PrismaService,

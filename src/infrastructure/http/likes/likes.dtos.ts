@@ -3,7 +3,9 @@ import { IsIn, IsInt, IsOptional, IsString, Min } from "class-validator"
 export class AddLikeRequestDto {
     @IsOptional()
     @IsString({ message: "El tipo de reacción debe ser un texto" })
-    @IsIn(["like", "fire", "clap"], { message: "Tipo de reacción no válida (like, fire, clap)" })
+    @IsIn(["like", "fire", "clap"], {
+        message: "Tipo de reacción no válida (like, fire, clap)",
+    })
     reactionType?: string
 
     @IsOptional()

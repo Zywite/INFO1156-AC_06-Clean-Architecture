@@ -12,7 +12,10 @@ const buildFuzzyRegex = (word: string) => {
 }
 
 export class ModerationDomainService {
-    moderate(text: string, prohibitedWords: ProhibitedWord[]): ModerationResult {
+    moderate(
+        text: string,
+        prohibitedWords: ProhibitedWord[],
+    ): ModerationResult {
         for (const pw of prohibitedWords) {
             const regex = buildFuzzyRegex(pw.word)
             if (regex.test(text)) {

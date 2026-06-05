@@ -8,14 +8,18 @@ import { CreatePostDto } from "@/application/dtos/posts/create-post.dto"
 export class CreatePostUseCase {
     constructor(
         @Inject("PostRepository") private readonly postRepo: PostRepository,
-        @Inject("ProhibitedWordRepository") private readonly prohibitedWordRepo: ProhibitedWordRepository,
+        @Inject("ProhibitedWordRepository")
+        private readonly prohibitedWordRepo: ProhibitedWordRepository,
         private readonly moderationService: ModerationDomainService,
     ) {}
 
     async execute(dto: CreatePostDto): Promise<Post> {
         const prohibitedWords = await this.prohibitedWordRepo.findAll()
         const textToModerate = `${dto.title} ${dto.description}`
-        const result = this.moderationService.moderate(textToModerate, prohibitedWords)
+        const result = this.moderationService.moderate(
+            textToModerate,
+            prohibitedWords,
+        )
 
         if (!result.approved) {
             throw new Error(result.reason ?? "Post bloqueado por moderación")

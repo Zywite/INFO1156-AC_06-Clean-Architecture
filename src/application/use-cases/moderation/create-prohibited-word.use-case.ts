@@ -3,7 +3,10 @@ import { ProhibitedWordRepository } from "@/domain/repositories/prohibited-word.
 import { ProhibitedWord } from "@/domain/entities/prohibited-word.entity"
 
 export class CreateProhibitedWordUseCase {
-    constructor(@Inject("ProhibitedWordRepository") private readonly repo: ProhibitedWordRepository) {}
+    constructor(
+        @Inject("ProhibitedWordRepository")
+        private readonly repo: ProhibitedWordRepository,
+    ) {}
     async execute(word: string, category: string) {
         const pw = new ProhibitedWord({ word, category })
         return this.repo.save(pw)
